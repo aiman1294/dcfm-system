@@ -30,8 +30,8 @@ public function store(Request $request)
     \App\Models\CaseFile::create([
         'case_title' => $request->case_title
     ]);
-
-    return back();
+    return redirect('/cases')->with('success', 'Case added!');
+    
 
 }
 }
