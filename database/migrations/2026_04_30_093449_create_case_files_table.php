@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('case_files', function (Blueprint $table) {
             $table->id();
-            $table->string('case_title');
+            $table->string('case_title', 50);
+            $table->string('case_description', 255)->nullable();
+            $table->string('case_priority', 50);
+            $table->string('case_status', 50)->default('open');
             $table->timestamps();
         });
     }

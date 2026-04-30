@@ -8,6 +8,8 @@ Route::get('/cases/create', [CaseFileController::class, 'create']);
 Route::post('/cases', [CaseFileController::class, 'store']);
 Route::get('/cases', [CaseFileController::class, 'index'])->name('cases');
 
+Route::get('/cases/{id}/edit', [CaseFileController::class, 'edit']);
+Route::put('/cases/{id}', [CaseFileController::class, 'update']);
 
 Route::get('/', function () {
     return view('welcome');

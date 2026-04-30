@@ -10,10 +10,26 @@
 
             @foreach($cases as $case)
                 <div class="border-b py-2">
-                    {{ $case->case_title }}
+                <div>
+                <strong>{{ $case->case_title }}</strong>
                 </div>
+                <div>{{ $case->case_description }}</div>
+                <div>Priority: {{ $case->case_priority }}</div>
+                <div>Status: {{ $case->case_status }}</div>
+                    <a href="/cases/{{ $case->id }}/edit" class="text-blue-500">
+                    Edit
+                    </a>
+                    
+                </div>
+
             @endforeach
+
+      
+   
+
             
+
+
             @if(session('success'))
     <p class="text-green-600">{{ session('success') }}</p>
 @endif
