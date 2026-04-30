@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CaseFile;
+//use Illuminate\Support\Facades\Auth;
 
 class CaseFileController extends Controller
 {
@@ -27,7 +28,7 @@ public function index()
 
 public function store(Request $request)
 {
-
+    //dd('HELLO I AM RUNNING', \Illuminate\Support\Facades\Auth::id());
     
 
     \App\Models\CaseFile::create([
@@ -35,20 +36,36 @@ public function store(Request $request)
         'case_description' => $request->case_description,
         'case_priority' => $request->case_priority,
         'case_status' => 'Open',
+        'user_id' => \Illuminate\Support\Facades\Auth::id()
+        //'user_id' => auth()->user()->id,
     ]);
     return redirect('/cases')->with('success', 'Case added!');
+    
+    
     
 
 }
 public function edit($id)
 {
+
     $case = CaseFile::findOrFail($id);
+
+    if ($case->user_id !== auth()->id()) {
+        abort(403); // forbidden
+    }
+
     return view('edit', compact('case'));
+
 }
 
 public function update(Request $request, $id)
 {
+   
     $case = CaseFile::findOrFail($id);
+
+    if ($case->user_id !== auth()->id()) {
+        abort(403);
+    }
 
     $case->update([
         'case_title' => $request->case_title,

@@ -16,9 +16,12 @@
                 <div>{{ $case->case_description }}</div>
                 <div>Priority: {{ $case->case_priority }}</div>
                 <div>Status: {{ $case->case_status }}</div>
-                    <a href="/cases/{{ $case->id }}/edit" class="text-blue-500">
+                    {{-- <a href="/cases/{{ $case->id }}/edit" class="text-blue-500">
                     Edit
-                    </a>
+                    </a> --}}
+                    @if($case->user_id === auth()->id())
+                    <a href="/cases/{{ $case->id }}/edit">Edit</a>
+                    @endif
                     
                 </div>
 
