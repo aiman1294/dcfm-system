@@ -6,7 +6,7 @@ use App\Http\Controllers\CaseFileController;
 
 Route::get('/cases/create', [CaseFileController::class, 'create']);
 Route::post('/cases', [CaseFileController::class, 'store']);
-Route::get('/cases', [CaseFileController::class, 'index']);
+Route::get('/cases', [CaseFileController::class, 'index'])->name('cases');
 
 
 Route::get('/', function () {
@@ -16,6 +16,8 @@ Route::get('/', function () {
 Route::get('/home', function(){
     return view('home');
 });
+
+
 
 
 Route::get('/dashboard', function () {
