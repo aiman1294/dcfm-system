@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CaseFileController;
 
-
-
+Route::get('/cases/create', [CaseFileController::class, 'create']);
+Route::post('/cases', [CaseFileController::class, 'store']);
+Route::get('/cases', [CaseFileController::class, 'index']);
 
 
 Route::get('/', function () {
