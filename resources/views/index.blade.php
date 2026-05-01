@@ -8,6 +8,33 @@
     <div class="py-6 max-w-3xl mx-auto">
         <div class="bg-white p-6 rounded-lg shadow">
 
+        <form method="GET" action="/cases" class="mb-4 flex gap-4">
+
+    <select name="priority" class="border px-2 py-1">
+        <option value="" {{ request('priority') == '' ? 'selected' : '' }}>All Priorities</option>
+        <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
+        <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>Medium</option>
+        <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
+    </select>
+
+    <select name="status" class="border px-2 py-1">
+        <option value="" {{ request('status') == '' ? 'selected' : '' }}>All Status</option>
+        <option value="Open" {{ request('status') == 'Open' ? 'selected' : '' }}>Open</option>
+        <option value="In Progress" {{ request('status') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
+        <option value="Closed" {{ request('status') == 'Closed' ? 'selected' : '' }}>Closed</option>
+    </select>
+
+    <button type="submit" class="bg-blue-500 text-black px-3 py-1 rounded">
+        Filter
+    </button>
+    
+    @if($cases->isEmpty())
+    <p class="text-gray-500">No cases match your filters.</p>
+    
+@endif
+
+</form>
+        
             @foreach($cases as $case)
 
             <div class="border-b py-3 space-y-1">
@@ -39,12 +66,6 @@
 </div>
                 
             @endforeach
-
-      
-   
-
-            
-
 
             @if(session('success'))
     <p class="text-green-600">{{ session('success') }}</p>
