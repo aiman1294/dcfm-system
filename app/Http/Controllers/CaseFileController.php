@@ -28,8 +28,27 @@ public function index(Request $request)
     if ($request->filled('status')) {
         $query->where('case_status', $request->status);
         }
+
+        if ($request->filled('search')) {
+    $query->where(function ($q) use ($request) {
+        $q->where('case_title', 'like', '%' . $request->search . '%')
+          ->orWhere('case_description', 'like', '%' . $request->search . '%');
+    });
+}
+
+         if ($request->filled('sort')) {
+    if ($request->sort === 'latest') {
+        $query->latest();
+    } elseif ($request->sort === 'oldest') {
+        $query->oldest();
+    } elseif ($request->sort === 'priority') {
+        $query->orderBy('case_priority');
+    }
+}
+
     
-    $cases = $query->get();
+    $cases = $query->paginate(5)->withQueryString();
+   
    
 
 
