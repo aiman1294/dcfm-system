@@ -30,8 +30,12 @@ public function index()
 
 public function store(Request $request)
 {
-    //dd('HELLO I AM RUNNING', \Illuminate\Support\Facades\Auth::id());
     
+    $validated = $request->validate([
+        'case_title' =>'required|string|max:255',
+        'case_description' => 'required|string',
+        'case_priority' => 'required|in:low,medium,high',
+    ]);
 
     \App\Models\CaseFile::create([
         'case_title' => $request->case_title,
@@ -49,13 +53,13 @@ public function store(Request $request)
 }
 public function edit($id)
 {
+    $case = CaseFile::findOrFail($id);
      $isAdmin = auth()->user()->role === 'admin';
     $isOwner = $case->user_id === auth()->id();
 
-    $case = CaseFile::findOrFail($id);
+    
 
-    // if ($case->user_id !== auth()->id() &&
-    //     auth()->user()->role !== 'admin')
+    
     if (!$isOwner && !$isAdmin) 
         {
         abort(403); // forbidden
@@ -67,13 +71,20 @@ public function edit($id)
 
 public function update(Request $request, $id)
 {
+    $case = CaseFile::findOrFail($id);
      $isAdmin = auth()->user()->role === 'admin';
     $isOwner = $case->user_id === auth()->id();
-   
-    $case = CaseFile::findOrFail($id);
 
-    // if ($case->user_id !== auth()->id() &&
-    //     auth()->user()->role !== 'admin')
+    
+    $validated = $request->validate([
+        'case_title' =>'required|string|max:255',
+        'case_description' => 'required|string',
+        'case_priority' => 'required|in:low,medium,high',
+    ]);
+   
+    
+
+    
         if (!$isOwner && !$isAdmin)  {
         abort(403);
     }
@@ -90,12 +101,12 @@ public function update(Request $request, $id)
 
 public function destroy($id)
 {
+    $case = CaseFile::findOrFail($id);
      $isAdmin = auth()->user()->role === 'admin';
     $isOwner = $case->user_id === auth()->id();
-    $case = CaseFile::findOrFail($id);
+    
 
-    // if ($case->user_id !== auth()->id() &&
-    //     auth()->user()->role !== 'admin') 
+    
     if (!$isOwner && !$isAdmin) {
         abort(403);
     }
@@ -103,5 +114,9 @@ public function destroy($id)
     $case->delete();
 
     return redirect('/cases')->with('success', 'Case deleted!');
+}
+public function show($id){
+    $case = CaseFile::findOrFail($id);
+    return view('show', compact('case'));
 }
 }
