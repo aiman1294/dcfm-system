@@ -18,9 +18,18 @@ class CaseFileController extends Controller
 
 
 
-public function index()
+public function index(Request $request)
 {
-    $cases = CaseFile::all();
+    $query = CaseFile::query();
+    if ($request->filled('priority')) {
+        $query->where('case_priority', $request->priority);
+        }
+
+    if ($request->filled('status')) {
+        $query->where('case_status', $request->status);
+        }
+    
+    $cases = $query->get();
    
 
 
