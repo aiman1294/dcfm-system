@@ -21,6 +21,12 @@
                     </a> --}}
                     @if($case->user_id === auth()->id())
                     <a href="/cases/{{ $case->id }}/edit">Edit</a>
+
+                    <form method="POST" action="/cases/{{ $case->id }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-500">Delete</button>
+                    </form>
                     @endif
                     
                 </div>
