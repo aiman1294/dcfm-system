@@ -9,33 +9,35 @@
         <div class="bg-white p-6 rounded-lg shadow">
 
             @foreach($cases as $case)
-                {{-- <pre>
-User ID: {{ auth()->id() }}
-Role: {{ auth()->user()->role ?? 'no user' }}
-Case User ID: {{ $case->user_id }}
-</pre> --}}
-                <div class="border-b py-2">
-                <div>
-                <strong>{{ $case->case_title }}</strong>
-                </div>
-                <div>{{ $case->case_description }}</div>
-                <div>Priority: {{ $case->case_priority }}</div>
-                <div>Status: {{ $case->case_status }}</div>
-                    {{-- <a href="/cases/{{ $case->id }}/edit" class="text-blue-500">
-                    Edit
-                    </a> --}}
-                    @if($case->user_id === auth()->id() || auth()->user()->role === 'admin')
-                    <a href="/cases/{{ $case->id }}/edit">Edit</a>
 
-                    <form method="POST" action="/cases/{{ $case->id }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-500">Delete</button>
-                    </form>
-                    @endif
-                    
-                </div>
+            <div class="border-b py-3 space-y-1">
 
+    <strong>{{ $case->case_title }}</strong>
+
+    <div>{{ $case->case_description }}</div>
+    <div>Priority: {{ $case->case_priority }}</div>
+    <div>Status: {{ $case->case_status }}</div>
+
+    <a href="/cases/{{ $case->id }}" class="text-blue-500 hover:underline">
+        Read More
+    </a>
+
+    @if($case->user_id === auth()->id() || auth()->user()->role === 'admin')
+        <div class="flex gap-4 mt-2 items-center">
+            <a href="/cases/{{ $case->id }}/edit" class="text-blue-600">Edit</a>
+
+            <form method="POST" action="/cases/{{ $case->id }}">
+                @csrf
+                @method('DELETE')
+                
+                <button type="submit" class="text-red-500">Delete</button>
+                
+            </form>
+        </div>
+    @endif
+
+</div>
+                
             @endforeach
 
       
