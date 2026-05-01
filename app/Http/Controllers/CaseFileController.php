@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\CaseFile;
 //use Illuminate\Support\Facades\Auth;
 
+
 class CaseFileController extends Controller
 {
+   
     //
     public function create()
 {
@@ -47,10 +49,15 @@ public function store(Request $request)
 }
 public function edit($id)
 {
+     $isAdmin = auth()->user()->role === 'admin';
+    $isOwner = $case->user_id === auth()->id();
 
     $case = CaseFile::findOrFail($id);
 
-    if ($case->user_id !== auth()->id()) {
+    // if ($case->user_id !== auth()->id() &&
+    //     auth()->user()->role !== 'admin')
+    if (!$isOwner && !$isAdmin) 
+        {
         abort(403); // forbidden
     }
 
@@ -60,10 +67,14 @@ public function edit($id)
 
 public function update(Request $request, $id)
 {
+     $isAdmin = auth()->user()->role === 'admin';
+    $isOwner = $case->user_id === auth()->id();
    
     $case = CaseFile::findOrFail($id);
 
-    if ($case->user_id !== auth()->id()) {
+    // if ($case->user_id !== auth()->id() &&
+    //     auth()->user()->role !== 'admin')
+        if (!$isOwner && !$isAdmin)  {
         abort(403);
     }
 
@@ -79,9 +90,13 @@ public function update(Request $request, $id)
 
 public function destroy($id)
 {
+     $isAdmin = auth()->user()->role === 'admin';
+    $isOwner = $case->user_id === auth()->id();
     $case = CaseFile::findOrFail($id);
 
-    if ($case->user_id !== auth()->id()) {
+    // if ($case->user_id !== auth()->id() &&
+    //     auth()->user()->role !== 'admin') 
+    if (!$isOwner && !$isAdmin) {
         abort(403);
     }
 
