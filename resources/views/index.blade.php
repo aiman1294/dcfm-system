@@ -10,6 +10,13 @@
 
         <form method="GET" action="/cases" class="mb-4 flex gap-4">
 
+        <input 
+    type="text" 
+    name="search" 
+    value="{{ request('search') }}"
+    placeholder="Search cases..."
+    class="border px-3 py-1 rounded w-48"
+/>
     <select name="priority" class="border px-2 py-1">
         <option value="" {{ request('priority') == '' ? 'selected' : '' }}>All Priorities</option>
         <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
@@ -24,14 +31,23 @@
         <option value="Closed" {{ request('status') == 'Closed' ? 'selected' : '' }}>Closed</option>
     </select>
 
+    <select name="sort" class="border px-2 py-1">
+    <option value="">Sort By</option>
+    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Newest</option>
+    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+    <option value="priority" {{ request('sort') == 'priority' ? 'selected' : '' }}>Priority</option>
+    </select>
+
     <button type="submit" class="bg-blue-500 text-black px-3 py-1 rounded">
         Filter
     </button>
+    @if(request()->hasAny(['priority','status','sort']))
+    <a href="/cases" class="bg-gray-300 text-black px-3 py-1 rounded hover:bg-gray-400">
+        Reset
+    </a>
+    @endif
     
-    @if($cases->isEmpty())
-    <p class="text-gray-500">No cases match your filters.</p>
     
-@endif
 
 </form>
         
@@ -66,6 +82,12 @@
 </div>
                 
             @endforeach
+
+            {{ $cases->links() }}
+              @if($cases->isEmpty())
+                    <p class="text-gray-500">No cases match your filters.</p>
+                @endif
+   
 
             @if(session('success'))
     <p class="text-green-600">{{ session('success') }}</p>
