@@ -9,6 +9,11 @@
         <div class="bg-white p-6 rounded-lg shadow">
 
             @foreach($cases as $case)
+                {{-- <pre>
+User ID: {{ auth()->id() }}
+Role: {{ auth()->user()->role ?? 'no user' }}
+Case User ID: {{ $case->user_id }}
+</pre> --}}
                 <div class="border-b py-2">
                 <div>
                 <strong>{{ $case->case_title }}</strong>
@@ -19,7 +24,7 @@
                     {{-- <a href="/cases/{{ $case->id }}/edit" class="text-blue-500">
                     Edit
                     </a> --}}
-                    @if($case->user_id === auth()->id())
+                    @if($case->user_id === auth()->id() || auth()->user()->role === 'admin')
                     <a href="/cases/{{ $case->id }}/edit">Edit</a>
 
                     <form method="POST" action="/cases/{{ $case->id }}">
