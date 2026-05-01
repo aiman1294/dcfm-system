@@ -3,6 +3,11 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CaseFileController;
+use App\Http\Controllers\AdminController;
+
+Route::get('/admin/role-requests', [AdminController::class, 'index']);
+Route::post('/admin/approve/{id}', [AdminController::class, 'approve']);
+Route::post('/admin/reject/{id}', [AdminController::class, 'reject']);
 
 Route::get('/cases/create', [CaseFileController::class, 'create']);
 Route::post('/cases', [CaseFileController::class, 'store']);

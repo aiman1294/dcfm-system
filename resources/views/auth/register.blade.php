@@ -28,6 +28,8 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
+        
+
         <!-- Confirm Password -->
         <div class="mt-4">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
@@ -37,6 +39,17 @@
                             name="password_confirmation" required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        </div>
+        <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700">
+            Request Role
+            </label>
+
+            <select name="requested_role" class="mt-1 block w-full border rounded px-2 py-1">
+            <option value="">Select Role</option>
+            <option value="lawyer">Lawyer</option>
+            <option value="judge">Judge</option>
+            </select>
         </div>
 
         <div class="flex items-center justify-end mt-4">
