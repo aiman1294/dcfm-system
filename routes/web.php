@@ -11,6 +11,7 @@ Route::get('/cases', [CaseFileController::class, 'index'])->name('cases');
 Route::get('/cases/{id}/edit', [CaseFileController::class, 'edit']);
 Route::put('/cases/{id}', [CaseFileController::class, 'update']);
 Route::delete('/cases/{id}', [CaseFileController::class, 'destroy']);
+Route::get('/cases/{id}', [CaseFileController::class, 'show']);
 
 Route::get('/', function () {
     return view('welcome');
