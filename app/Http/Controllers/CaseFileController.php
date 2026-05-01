@@ -71,9 +71,22 @@ public function update(Request $request, $id)
         'case_title' => $request->case_title,
         'case_description' => $request->case_description,
         'case_priority' => $request->case_priority,
-        'case_status' => $request->case_status,
+        'case_status' => $case->case_status, // use later: 'case_status' => $request->case_status ?? $case->case_status
     ]);
 
     return redirect('/cases')->with('success', 'Case updated!');
+}
+
+public function destroy($id)
+{
+    $case = CaseFile::findOrFail($id);
+
+    if ($case->user_id !== auth()->id()) {
+        abort(403);
+    }
+
+    $case->delete();
+
+    return redirect('/cases')->with('success', 'Case deleted!');
 }
 }
