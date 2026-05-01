@@ -18,7 +18,15 @@
                 <form method="POST" action="/cases/{{ $case->id }}" class="space-y-4 mt-4">
                     @csrf
                     @method('PUT')
-
+                    @if ($errors->any())
+                    <div class="mb-4 text-red-600">
+                    <ul>
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                    </ul>
+                    </div>
+                    @endif
                     <input 
                         name="case_title"
                         value="{{ $case->case_title }}"
@@ -40,11 +48,7 @@
                         <option value="medium" {{ $case->case_priority === 'medium' ? 'selected' : '' }}>Medium</option>
                         <option value="high" {{ $case->case_priority === 'high' ? 'selected' : '' }}>High</option>
                     </select>
-                    {{-- <select name="case_status" class="w-full border rounded px-3 py-2">
-                        <option value="Open" {{ $case->case_status == 'Open' ? 'selected' : '' }}>Open</option>
-                        <option value="In Progress" {{ $case->case_status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                        <option value="Closed" {{ $case->case_status == 'Closed' ? 'selected' : '' }}>Closed</option>
-                    </select> --}}
+                   
 
                     <button 
                         type="submit"
