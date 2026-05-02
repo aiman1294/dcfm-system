@@ -5,6 +5,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CaseFileController;
 use App\Http\Controllers\AdminController;
 
+
+Route::middleware(['auth', 'approved'])->group(function () {
+    Route::get('/cases', [CaseFileController::class, 'index'])->name('cases');
+    Route::get('/cases/create', [CaseFileController::class, 'create']);
+    Route::post('/cases', [CaseFileController::class, 'store']);
+});
+
+
 Route::get('/admin/role-requests', [AdminController::class, 'index']);
 Route::post('/admin/approve/{id}', [AdminController::class, 'approve']);
 Route::post('/admin/reject/{id}', [AdminController::class, 'reject']);
@@ -17,6 +25,8 @@ Route::get('/cases/{id}/edit', [CaseFileController::class, 'edit']);
 Route::put('/cases/{id}', [CaseFileController::class, 'update']);
 Route::delete('/cases/{id}', [CaseFileController::class, 'destroy']);
 Route::get('/cases/{id}', [CaseFileController::class, 'show']);
+
+Route::post('/cases/{id}/assign-judge', [CaseFileController::class, 'assignJudge']);
 
 Route::get('/', function () {
     return view('welcome');
