@@ -9,17 +9,31 @@ use App\Models\CaseFile;
 
 class CaseFileController extends Controller
 {
-   
-    //
-    public function create()
+    
+public function assignJudge(Request $request, $id)
 {
-    return view('create');
+    $case = CaseFile::findOrFail($id);
+
+    if (auth()->user()->role !== 'admin') {
+        abort(403);
+    }
+
+    $request->validate([
+        'judge_id' => 'required|exists:users,id'
+    ]);
+
+    $case->judge_id = $request->judge_id;
+    $case->save();
+
+    return back()->with('success', 'Judge assigned!');
 }
-
-
 
 public function index(Request $request)
 {
+    // if (auth()->user()->role === 'pending') {
+    // return redirect('/')->with('error', 'Wait for admin approval');
+
+
     $query = CaseFile::query();
     if ($request->filled('priority')) {
         $query->where('case_priority', $request->priority);
@@ -56,22 +70,34 @@ public function index(Request $request)
     
 }
 
+    public function create()
+{
+    //  if (auth()->user()->role === 'pending') {
+    //     return redirect('/')->with('error', 'Wait for admin approval');
+    // }
+    return view('create');
+}
+
 public function store(Request $request)
 {
+    // if (auth()->user()->role === 'pending') {
+    //     return redirect('/')->with('error', 'Wait for admin approval');
+    // }
     
     $validated = $request->validate([
         'case_title' =>'required|string|max:255',
         'case_description' => 'required|string',
         'case_priority' => 'required|in:low,medium,high',
+        'case_status' => 'nullable|in:Open,In Progress,Closed',
     ]);
 
     \App\Models\CaseFile::create([
         'case_title' => $request->case_title,
         'case_description' => $request->case_description,
         'case_priority' => $request->case_priority,
-        'case_status' => 'Open',
+        'case_status' => $request->filled('case_status') ? $request->case_status : 'Open',
         'user_id' => \Illuminate\Support\Facades\Auth::id()
-        //'user_id' => auth()->user()->id,
+
     ]);
     return redirect('/cases')->with('success', 'Case added!');
     
@@ -85,8 +111,9 @@ public function edit($id)
      $isAdmin = auth()->user()->role === 'admin';
     $isOwner = $case->user_id === auth()->id();
 
-    
-
+    // if (auth()->user()->role === 'pending') {
+    //     return redirect('/')->with('error', 'Wait for admin approval');
+    // }
     
     if (!$isOwner && !$isAdmin) 
         {
@@ -99,30 +126,49 @@ public function edit($id)
 
 public function update(Request $request, $id)
 {
+
+    
+
     $case = CaseFile::findOrFail($id);
-     $isAdmin = auth()->user()->role === 'admin';
+
+    $isAdmin = auth()->user()->role === 'admin';
     $isOwner = $case->user_id === auth()->id();
+
+      if (!$isOwner && !$isAdmin)  {
+        abort(403);
+    }
+    if ($isAdmin && $request->filled('judge_id')) {
+    $updateData['judge_id'] = $request->judge_id;
 
     
     $validated = $request->validate([
         'case_title' =>'required|string|max:255',
         'case_description' => 'required|string',
         'case_priority' => 'required|in:low,medium,high',
+        'case_status' => 'nullable|in:Open,In Progress,Closed',
     ]);
    
     
 
-    
-        if (!$isOwner && !$isAdmin)  {
-        abort(403);
-    }
-
-    $case->update([
+    $updateData =[
         'case_title' => $request->case_title,
         'case_description' => $request->case_description,
-        'case_priority' => $request->case_priority,
-        'case_status' => $case->case_status, // use later: 'case_status' => $request->case_status ?? $case->case_status
-    ]);
+        'case_priority' => $request->case_priority, 
+    ];
+    $isAdmin = auth()->user()->role === 'admin';
+
+if ($isAdmin && $request->filled('judge_id')) {
+    $updateData['judge_id'] = $request->judge_id;
+}
+    
+}
+    if(in_array(auth()->user()->role, ['judge','admin']) && $request->filled('case_status')) {
+        $updateData['case_status']= $request->case_status;
+    }
+
+    $case->update($updateData);
+        
+    
 
     return redirect('/cases')->with('success', 'Case updated!');
 }
@@ -134,6 +180,9 @@ public function destroy($id)
     $isOwner = $case->user_id === auth()->id();
     
 
+    // if (auth()->user()->role === 'pending') {
+    //     return redirect('/')->with('error', 'Wait for admin approval');
+    // }
     
     if (!$isOwner && !$isAdmin) {
         abort(403);
