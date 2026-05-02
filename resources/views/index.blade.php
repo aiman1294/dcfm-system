@@ -59,7 +59,20 @@
 
     <div>{{ $case->case_description }}</div>
     <div>Priority: {{ $case->case_priority }}</div>
-    <div>Status: {{ $case->case_status }}</div>
+    <div>
+    Status:
+    <span class="px-2 py-1 rounded text-sm
+        @if($case->case_status === 'Open') bg-green-100 text-green-700
+        @elseif($case->case_status === 'In Progress') bg-yellow-100 text-yellow-700
+        @elseif($case->case_status === 'Closed') bg-gray-200 text-gray-700
+        @endif
+    ">
+        {{ $case->case_status }}
+    </span>
+</div>
+<div>
+    Judge: {{ $case->judge->name ?? 'Not assigned' }}
+</div>
 
     <a href="/cases/{{ $case->id }}" class="text-blue-500 hover:underline">
         Read More

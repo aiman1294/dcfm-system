@@ -38,6 +38,20 @@
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
                 </select>
+                
+                @if(in_array(auth()->user()->role, ['admin', 'judge']))
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Case Status
+                        </label>
+
+                        <select name="case_status" class="w-full border rounded px-3 py-2">
+                            <option value="Open">Open</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                @endif
 
                 <button 
                     type="submit"

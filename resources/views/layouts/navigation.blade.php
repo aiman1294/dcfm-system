@@ -19,9 +19,11 @@
             </div>
 
             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                 @if(auth()->user()->role !== 'pending')
                     <x-nav-link :href="route('cases')" :active="request()->routeIs('cases')">
                         {{ __('Cases') }}
                     </x-nav-link>
+                @endif
                 </div>
 
             <!-- Settings Dropdown -->
@@ -76,6 +78,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @if(auth()->user()->role !== 'pending')
+    <x-responsive-nav-link :href="route('cases')" :active="request()->routeIs('cases')">
+        {{ __('Cases') }}
+    </x-responsive-nav-link>
+@endif
         </div>
 
         <!-- Responsive Settings Options -->

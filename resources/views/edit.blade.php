@@ -48,7 +48,38 @@
                         <option value="medium" {{ $case->case_priority === 'medium' ? 'selected' : '' }}>Medium</option>
                         <option value="high" {{ $case->case_priority === 'high' ? 'selected' : '' }}>High</option>
                     </select>
-                   
+
+                    @if(auth()->user()->role === 'admin')
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+            Assign Judge
+        </label>
+
+        <select name="judge_id" class="w-full border rounded px-3 py-2">
+            <option value="">Select Judge</option>
+
+            @foreach(\App\Models\User::where('role', 'judge')->get() as $judge)
+                <option value="{{ $judge->id }}"
+                    {{ $case->judge_id == $judge->id ? 'selected' : '' }}>
+                    {{ $judge->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+@endif
+
+                    @if(auth()->user()->role === 'judge')
+                    <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Case Status
+                    </label>
+                    <select name="case_status" class="w-full border rounded px-3 py-2">
+                    <option value="Open" {{ $case->case_status === 'Open' ? 'selected' : '' }}>Open</option>
+                    <option value="In Progress" {{ $case->case_status === 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                    <option value="Closed" {{ $case->case_status === 'Closed' ? 'selected' : '' }}>Closed</option>
+                    </select>
+                    </div>
+                    @endif
 
                     <button 
                         type="submit"
