@@ -186,10 +186,16 @@ public function update(Request $request, $id)
     elseif ($isAssignedJudge) {
         $validated = $request->validate([
             'case_status' => 'required|in:Open,In Progress,Closed',
+            'hearing_date' => 'nullable|date',
+            'judge_notes' => 'nullable|string',
+            'verdict' => 'nullable|string',
         ]);
 
         $case->update([
             'case_status' => $validated['case_status'],
+            'hearing_date' => $validated['hearing_date'],
+            'judge_notes' => $validated['judge_notes'],
+            'verdict' => $validated['verdict'],
         ]);
         return redirect('/cases')->with('success', 'Case status updated!');
     }

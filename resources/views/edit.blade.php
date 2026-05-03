@@ -101,7 +101,25 @@
             {{ $case->case_description }}
         </textarea>
     </div>
+    
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+        Hearing Date</label>
+    <input type="date" name="hearing_date"
+    value="{{ $case->hearing_date }}"
+    class="w-full border rounded px-3 py-2">
 
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+        Notes
+    </label>
+<textarea name="judge_notes"
+    class="w-full border rounded px-3 py-2"
+    placeholder="Add notes...">{{ $case->judge_notes }}</textarea>
+
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+        Verdict    </label>
+<textarea name="verdict"
+    class="w-full border rounded px-3 py-2"
+    placeholder="Add verdict...">{{ $case->verdict }}</textarea>
 
 @endif
 

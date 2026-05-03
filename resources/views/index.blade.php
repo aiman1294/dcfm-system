@@ -1,9 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            All Cases
+            @if(auth()->user()->role === 'judge')
+        My Assigned Cases
+    @elseif(auth()->user()->role === 'lawyer')
+        My Filed Cases
+    @else
+        All Cases
+    @endif
         </h2>
     </x-slot>
+
 
     <div class="py-6 max-w-3xl mx-auto">
         <div class="bg-white p-6 rounded-lg shadow">
@@ -73,7 +80,14 @@
     </span>
 </div>
 <div>
-    Judge: {{ $case->judge->name ?? 'Not assigned' }}
+    Judge: 
+    @if($case->judge)
+        <span class="text-indigo-600 font-medium">
+            {{ $case->judge->name }}
+        </span>
+    @else
+        <span class="text-gray-400 italic">Not assigned</span>
+    @endif
 </div>
 
     <a href="/cases/{{ $case->id }}" class="text-blue-500 hover:underline">

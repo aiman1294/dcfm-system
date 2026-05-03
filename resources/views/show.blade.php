@@ -41,6 +41,20 @@
                 </div>
 
                 <div>
+                    <span class="font-semibold">Hearing Date:</span>
+                    {{ $case->hearing_date ? $case->hearing_date->format('d M Y') : 'Not scheduled' }}
+                </div>
+
+                <div>
+                    <span class="font-semibold">Judge Notes:</span>
+                    {{ $case->judge_notes ?? 'No notes available.' }}
+                </div>
+                <div>
+                    <span class="font-semibold">Verdict:</span>
+                    {{ $case->verdict ?? 'No verdict available.' }}
+                </div>
+
+                <div>
                     <span class="font-semibold">Filed On:</span>
                     {{ $case->created_at->format('d M Y') }}
                 </div>
@@ -49,6 +63,7 @@
                     <span class="font-semibold">Last Updated:</span>
                     {{ $case->updated_at->format('d M Y') }}
                 </div>
+                
             </div>
 
             
