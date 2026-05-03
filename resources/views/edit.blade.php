@@ -5,10 +5,17 @@
         </h2>
     </x-slot>
 
+    @php
+    $user = auth()->user();
+    $isAdmin = $user->role === 'admin';
+    $isOwner = $case->user_id === $user->id;
+    $isAssignedJudge = $user->role === 'judge' && $case->judge_id === $user->id;
+@endphp
+
     <div class="py-6 max-w-3xl mx-auto">
         <div class="bg-white p-6 rounded-lg shadow">
 
-          
+         
                 <div class="border-b py-2">
                 <div>
                 <strong>{{ $case->case_title }}</strong>
@@ -27,12 +34,20 @@
                     </ul>
                     </div>
                     @endif
+
+                     @if($isOwner || $isAdmin)
+                      <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Case Title
+                    </label>
                     <input 
                         name="case_title"
                         value="{{ $case->case_title }}"
                         placeholder="Case title"
                         class="w-full border rounded px-3 py-2"
                     >
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Case Description
+                    </label>
                     <textarea 
                         name="case_description"
                         class="w-full border rounded px-3 py-2 text-gray-900 bg-white"
@@ -40,6 +55,10 @@
                     >{{ $case->case_description }}
                         
                     </textarea>
+
+                     <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Case Priority
+                    </label>
                     <select 
                         name="case_priority"  
                         class="w-full border rounded px-3 py-2" >
@@ -48,6 +67,8 @@
                         <option value="medium" {{ $case->case_priority === 'medium' ? 'selected' : '' }}>Medium</option>
                         <option value="high" {{ $case->case_priority === 'high' ? 'selected' : '' }}>High</option>
                     </select>
+
+                    @endif
 
                     @if(auth()->user()->role === 'admin')
     <div>
@@ -68,7 +89,23 @@
     </div>
 @endif
 
-                    @if(auth()->user()->role === 'judge')
+                    @if($isAssignedJudge)
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Case Title</label>
+        <input value="{{ $case->case_title }}" class="w-full border rounded px-3 py-2 bg-gray-100" disabled>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea class="w-full border rounded px-3 py-2 bg-gray-100" disabled>
+            {{ $case->case_description }}
+        </textarea>
+    </div>
+
+
+@endif
+
+                @if(auth()->user()->role === 'judge' || auth()->user()->role === 'admin')
                     <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                             Case Status
@@ -79,14 +116,17 @@
                     <option value="Closed" {{ $case->case_status === 'Closed' ? 'selected' : '' }}>Closed</option>
                     </select>
                     </div>
-                    @endif
-
-                    <button 
+                     @endif 
+                    
+                  <button 
                         type="submit"
                         class="bg-indigo-600 text-black px-4 py-2 rounded hover:bg-indigo-700"
                     >
                         Update
                     </button>
+                   
+
+                
 
                 </form>
 
