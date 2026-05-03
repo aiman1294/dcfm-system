@@ -46,6 +46,8 @@
         Reset
     </a>
     @endif
+
+    
     
     
 
@@ -78,7 +80,7 @@
         Read More
     </a>
 
-    @if($case->user_id === auth()->id() || auth()->user()->role === 'admin')
+    {{-- @if($case->user_id === auth()->id() || auth()->user()->role === 'admin')
         <div class="flex gap-4 mt-2 items-center">
             <a href="/cases/{{ $case->id }}/edit" class="text-blue-600">Edit</a>
 
@@ -90,16 +92,57 @@
                 
             </form>
         </div>
-    @endif
+    @endif --}}
+    @php
+    $user = auth()->user();
+    $isOwner = $case->user_id === $user->id;
+    $isAdmin = $user->role === 'admin';
+    $isAssignedJudge = $user->role === 'judge' && $case->judge_id === $user->id;
+@endphp
+
+@if($isOwner || $isAdmin || $isAssignedJudge)
+    <div class="flex gap-4 mt-2 items-center">
+        <a href="/cases/{{ $case->id }}/edit" class="text-blue-600">Edit</a>
+
+        @if($isOwner || $isAdmin)
+            <form method="POST" action="/cases/{{ $case->id }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="text-red-500">Delete</button>
+            </form>
+        @endif
+    </div>
+@endif
 
 </div>
                 
             @endforeach
 
-            {{ $cases->links() }}
+            {{-- {{ $cases->links() }}
               @if($cases->isEmpty())
                     <p class="text-gray-500">No cases match your filters.</p>
-                @endif
+                @endif --}}
+
+                {{ $cases->links() }}
+
+@if($cases->isEmpty())
+    @php
+        $hasFilters = request()->hasAny(['search','priority','status','sort']);
+        $role = auth()->user()->role;
+    @endphp
+
+    <p class="text-gray-500">
+        @if($hasFilters)
+            No cases match your filters.
+        @elseif($role === 'judge')
+            No cases assigned to you yet.
+        @elseif($role === 'lawyer')
+            You haven't filed any cases yet.
+        @else
+            No cases found.
+        @endif
+    </p>
+@endif
    
 
             @if(session('success'))
