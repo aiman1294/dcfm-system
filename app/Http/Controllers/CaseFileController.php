@@ -33,8 +33,21 @@ public function index(Request $request)
     // if (auth()->user()->role === 'pending') {
     // return redirect('/')->with('error', 'Wait for admin approval');
 
-
+    $user = auth()->user();
     $query = CaseFile::query();
+
+    if ($user->role === 'pending') {
+        abort(403); // or redirect if you prefer
+    }
+
+    if ($user->role === 'lawyer') {
+        $query->where('user_id', $user->id);
+    }
+
+    if ($user->role === 'judge') {
+        $query->where('judge_id', $user->id);
+    }
+
     if ($request->filled('priority')) {
         $query->where('case_priority', $request->priority);
         }
@@ -72,17 +85,19 @@ public function index(Request $request)
 
     public function create()
 {
-    //  if (auth()->user()->role === 'pending') {
-    //     return redirect('/')->with('error', 'Wait for admin approval');
-    // }
+    
+    if (!in_array(auth()->user()->role, ['lawyer', 'admin'])) {
+        abort(403);
+    }
+
     return view('create');
 }
 
 public function store(Request $request)
 {
-    // if (auth()->user()->role === 'pending') {
-    //     return redirect('/')->with('error', 'Wait for admin approval');
-    // }
+     if (!in_array(auth()->user()->role, ['lawyer', 'admin'])) {
+        abort(403);
+    }
     
     $validated = $request->validate([
         'case_title' =>'required|string|max:255',
@@ -108,14 +123,14 @@ public function store(Request $request)
 public function edit($id)
 {
     $case = CaseFile::findOrFail($id);
-     $isAdmin = auth()->user()->role === 'admin';
-    $isOwner = $case->user_id === auth()->id();
+    $user = auth()->user();
 
-    // if (auth()->user()->role === 'pending') {
-    //     return redirect('/')->with('error', 'Wait for admin approval');
-    // }
+    $isAdmin = auth()->user()->role === 'admin';
+    $isOwner = $case->user_id === $user->id;
+    $isAssignedJudge = $user->role === 'judge' && $case->judge_id === $user->id;
+
     
-    if (!$isOwner && !$isAdmin) 
+    if (!$isOwner && !$isAdmin && !$isAssignedJudge) 
         {
         abort(403); // forbidden
     }
@@ -124,54 +139,103 @@ public function edit($id)
 
 }
 
+// 
 public function update(Request $request, $id)
 {
-
+    
+    $case = CaseFile::findOrFail($id);
+    $user = auth()->user();
     
 
-    $case = CaseFile::findOrFail($id);
+    $isAdmin = $user->role === 'admin';
+    $isOwner = $case->user_id === $user->id;
+    $isAssignedJudge = $user->role === 'judge' && $case->judge_id === $user->id;
 
-    $isAdmin = auth()->user()->role === 'admin';
-    $isOwner = $case->user_id === auth()->id();
-
-      if (!$isOwner && !$isAdmin)  {
+    if (!$isOwner && !$isAdmin && !$isAssignedJudge) {
         abort(403);
     }
-    if ($isAdmin && $request->filled('judge_id')) {
-    $updateData['judge_id'] = $request->judge_id;
+
+    $updateData = [];
 
     
-    $validated = $request->validate([
-        'case_title' =>'required|string|max:255',
-        'case_description' => 'required|string',
-        'case_priority' => 'required|in:low,medium,high',
-        'case_status' => 'nullable|in:Open,In Progress,Closed',
-    ]);
-   
-    
+    if ($isAdmin) {
+        $validated = $request->validate([
+            'case_title' => 'required|string|max:255',
+            'case_description' => 'required|string',
+            'case_priority' => 'required|in:low,medium,high',
+            'case_status' => 'nullable|in:Open,In Progress,Closed',
+            'judge_id' => 'nullable|exists:users,id',
+        ]);
 
-    $updateData =[
-        'case_title' => $request->case_title,
-        'case_description' => $request->case_description,
-        'case_priority' => $request->case_priority, 
-    ];
-    $isAdmin = auth()->user()->role === 'admin';
-
-if ($isAdmin && $request->filled('judge_id')) {
-    $updateData['judge_id'] = $request->judge_id;
-}
-    
-}
-    if(in_array(auth()->user()->role, ['judge','admin']) && $request->filled('case_status')) {
-        $updateData['case_status']= $request->case_status;
+        $updateData = $validated;
     }
 
-    $case->update($updateData);
-        
     
+    elseif ($isOwner) {
+        $validated = $request->validate([
+            'case_title' => 'required|string|max:255',
+            'case_description' => 'required|string',
+            'case_priority' => 'required|in:low,medium,high',
+        ]);
+        
 
-    return redirect('/cases')->with('success', 'Case updated!');
+        $updateData = $validated;
+    }
+
+    
+    elseif ($isAssignedJudge) {
+        $validated = $request->validate([
+            'case_status' => 'required|in:Open,In Progress,Closed',
+        ]);
+
+        $case->update([
+            'case_status' => $validated['case_status'],
+        ]);
+        return redirect('/cases')->with('success', 'Case status updated!');
+    }
+ 
+
+    $case->update($updateData);
+
+     return redirect('/cases')->with('success', 'Case updated!');
 }
+
+    // $validated = $request->validate([
+    //     'case_title' => 'required|string|max:255',
+    //     'case_description' => 'required|string',
+    //     'case_priority' => 'required|in:low,medium,high',
+    //     'case_status' => 'nullable|in:Open,In Progress,Closed',
+    //     'judge_id' => 'nullable|exists:users,id',
+    // ]);
+
+    // $updateData = [];
+
+   
+    // if ($isAdmin) {
+    //     $updateData = $validated;
+    // }
+
+    
+    // elseif ($isOwner) {
+    //     $updateData = [
+    //         'case_title' => $validated['case_title'],
+    //         'case_description' => $validated['case_description'],
+    //         'case_priority' => $validated['case_priority'],
+    //     ];
+    // }
+
+    
+    // elseif ($isAssignedJudge && $request->filled('case_status')) {
+    //     $updateData = [
+    //         'case_status' => $validated['case_status'],
+    //     ];
+    // }
+
+    // $case->update($updateData);
+
+    // return redirect('/cases')->with('success', 'Case updated!');
+    // }
+
 
 public function destroy($id)
 {
@@ -194,6 +258,15 @@ public function destroy($id)
 }
 public function show($id){
     $case = CaseFile::findOrFail($id);
+    $user = auth()->user();
+
+    $isAdmin = $user->role === 'admin';
+    $isOwner = $case->user_id === $user->id;
+    $isAssignedJudge = $user->role === 'judge' && $case->judge_id === $user->id;
+
+    if (!$isAdmin && !$isOwner && !$isAssignedJudge) {
+        abort(403);
+    }
     return view('show', compact('case'));
 }
 }
