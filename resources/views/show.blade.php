@@ -63,8 +63,9 @@
                     <span class="font-semibold">Last Updated:</span>
                     {{ $case->updated_at->format('d M Y') }}
                 </div>
+                </div>
                 
-            </div>
+                
 
             
             @if($case->user_id === auth()->id() || auth()->user()->role === 'admin')

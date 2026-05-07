@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CaseFileController;
 use App\Http\Controllers\AdminController;
+use App\Models\CaseLog;
 
 
 Route::middleware(['auth', 'approved'])->group(function () {
@@ -39,8 +40,34 @@ Route::get('/home', function(){
 
 
 
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+
 Route::get('/dashboard', function () {
-    return view('dashboard');
+
+    $user = auth()->user();
+
+    if ($user->role === 'admin') {
+
+        $logs = CaseLog::latest()->take(10)->get();
+
+    } elseif ($user->role === 'judge') {
+
+        $logs = CaseLog::whereHas('caseFile', function ($query) use ($user) {
+            $query->where('judge_id', $user->id);
+        })->latest()->take(10)->get();
+
+    } else {
+
+        $logs = CaseLog::whereHas('caseFile', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->latest()->take(10)->get();
+    }
+
+    return view('dashboard', compact('logs'));
+
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

@@ -15,4 +15,9 @@ class CaseFile extends Model
     public function judge(){
         return $this->belongsTo(User::class, 'judge_id');
     }
+
+    public function logs()
+    {
+    return $this->hasMany(CaseLog::class);
+    }
 }

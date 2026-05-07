@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CaseFile;
+use App\Models\CaseLog;
 //use Illuminate\Support\Facades\Auth;
 
 
@@ -24,6 +25,13 @@ public function assignJudge(Request $request, $id)
 
     $case->judge_id = $request->judge_id;
     $case->save();
+    $judge = \App\Models\User::find($request->judge_id);
+    CaseLog::create([
+    'case_file_id' => $case->id,
+    'user_id' => auth()->id(),
+    'action' => 'Assigned Judge'.$judge->name,
+    ]);
+
 
     return back()->with('success', 'Judge assigned!');
 }
@@ -106,13 +114,18 @@ public function store(Request $request)
         'case_status' => 'nullable|in:Open,In Progress,Closed',
     ]);
 
-    \App\Models\CaseFile::create([
+    $case = \App\Models\CaseFile::create([
         'case_title' => $request->case_title,
         'case_description' => $request->case_description,
         'case_priority' => $request->case_priority,
         'case_status' => $request->filled('case_status') ? $request->case_status : 'Open',
         'user_id' => \Illuminate\Support\Facades\Auth::id()
 
+    ]);
+    CaseLog::create([
+    'case_file_id' => $case->id,
+    'user_id' => auth()->id(),
+    'action' => 'New Case Created.',
     ]);
     return redirect('/cases')->with('success', 'Case added!');
     
@@ -168,6 +181,16 @@ public function update(Request $request, $id)
         ]);
 
         $updateData = $validated;
+        if (!empty($validated['judge_id'])) {
+
+    $judge = \App\Models\User::find($validated['judge_id']);
+
+    CaseLog::create([
+        'case_file_id' => $case->id,
+        'user_id' => auth()->id(),
+        'action' => 'Assigned Judge ' . $judge->name,
+    ]);
+}
     }
 
     
@@ -197,6 +220,27 @@ public function update(Request $request, $id)
             'judge_notes' => $validated['judge_notes'],
             'verdict' => $validated['verdict'],
         ]);
+        CaseLog::create([
+            'case_file_id' => $case->id,
+            'user_id' => auth()->id(),
+            'action' => 'Updated case status to '.$validated['case_status'],
+        ]);
+        if (!empty($validated['verdict'])) {
+
+    CaseLog::create([
+        'case_file_id' => $case->id,
+        'user_id' => auth()->id(),
+        'action' => 'Added verdict',
+    ]);
+    }
+    if (!empty($validated['hearing_date'])) {
+
+    CaseLog::create([
+        'case_file_id' => $case->id,
+        'user_id' => auth()->id(),
+        'action' => 'Scheduled hearing '.$validated['hearing_date'],
+    ]);
+    }   
         return redirect('/cases')->with('success', 'Case status updated!');
     }
  
@@ -265,6 +309,7 @@ public function destroy($id)
 public function show($id){
     $case = CaseFile::findOrFail($id);
     $user = auth()->user();
+    //dd($case->logs);
 
     $isAdmin = $user->role === 'admin';
     $isOwner = $case->user_id === $user->id;
