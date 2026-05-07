@@ -42,8 +42,8 @@
                                         <span>•</span>
 
                                         <a href="/cases/{{ $log->case_file_id }}"
-                                           class="text-blue-600 hover:underline">
-                                            Case #{{ $log->case_file_id }}
+                                        class="text-blue-600 hover:underline font-medium">
+                                            View Case #{{ $log->case_file_id }}
                                         </a>
 
                                         <span>•</span>

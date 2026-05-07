@@ -230,7 +230,7 @@ public function update(Request $request, $id)
     CaseLog::create([
         'case_file_id' => $case->id,
         'user_id' => auth()->id(),
-        'action' => 'Added verdict',
+        'action' => 'Added verdict to the case',
     ]);
     }
     if (!empty($validated['hearing_date'])) {
