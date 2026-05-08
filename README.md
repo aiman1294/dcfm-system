@@ -1,59 +1,279 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# DCFM System — Digital Court File Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
 
-## About Laravel
+DCFM (Digital Court File Management System) is a Laravel-based web application designed to streamline court case management for lawyers, judges, and administrators.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The system provides secure role-based access control, case tracking, judge assignment, verdict management, hearing scheduling, and activity logging through a centralized platform.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Built using:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* Laravel
+* Blade Templates
+* Tailwind CSS
+* SQLite/MySQL
+* Laravel Breeze Authentication
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# Features
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Authentication & Authorization
 
-## Laravel Sponsors
+* User Registration & Login
+* Laravel Breeze Authentication
+* Role-based Access Control
+* Pending Role Approval System
+* Admin-only Approval Dashboard
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Roles
 
-### Premium Partners
+#### Admin
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+* Manage all cases
+* Assign judges
+* View all activity logs
+* Approve/reject role requests
+* Edit all case details
 
-## Contributing
+#### Lawyer
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+* Register cases
+* View only their filed cases
+* Edit their own cases
+* Track verdicts and hearing updates
 
-## Code of Conduct
+#### Judge
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+* View only assigned cases
+* Update case status
+* Add hearing dates
+* Add judge notes
+* Add verdicts
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Case Management
 
-## License
+## Case Features
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+* Create cases
+* Edit cases
+* Delete cases
+* Search cases
+* Filter by:
+
+  * Status
+  * Priority
+* Sort by:
+
+  * Latest
+  * Oldest
+  * Priority
+* Pagination support
+
+---
+
+# Judge Workflow
+
+Admins can assign judges to cases.
+
+Assigned judges can:
+
+* Change case status
+* Add hearing dates
+* Add verdicts
+* Add judge notes
+
+Judges cannot:
+
+* Edit title
+* Edit description
+* Edit priority
+* Access unrelated cases
+
+---
+
+# Role-Based Security
+
+The system includes strict authorization checks:
+
+* Lawyers only access their own cases
+* Judges only access assigned cases
+* Admins access all cases
+* Unauthorized URL access is blocked
+* Pending users cannot access protected features
+
+---
+
+# Activity Timeline System
+
+Every important action is logged into an activity timeline.
+
+## Logged Activities
+
+* Case creation
+* Judge assignment
+* Status updates
+* Hearing scheduling
+* Verdict additions
+
+## Dashboard Activity Feed
+
+### Admin Dashboard
+
+Shows system-wide activity.
+
+### Judge Dashboard
+
+Shows activity only related to assigned cases.
+
+### Lawyer Dashboard
+
+Shows activity only related to their filed cases.
+
+The activity feed includes:
+
+* Timestamp
+* User who performed the action
+* Linked case reference
+* Scrollable timeline UI
+
+---
+
+# UI Features
+
+* Responsive dashboard layout
+* Modern landing page
+* Scrollable activity timeline
+* Status badges
+* Role-based navigation
+* Clean Tailwind UI
+
+---
+
+# Database Structure
+
+## Main Tables
+
+### users
+
+Stores:
+
+* Authentication data
+* Role information
+
+### case_files
+
+Stores:
+
+* Case details
+* Status
+* Priority
+* Judge assignment
+* Hearing date
+* Verdict
+* Notes
+
+### case_logs
+
+Stores:
+
+* Activity timeline logs
+* User actions
+* Related case references
+
+---
+
+# Technologies Used
+
+| Technology     | Purpose           |
+| -------------- | ----------------- |
+| Laravel        | Backend Framework |
+| Blade          | Templating Engine |
+| Tailwind CSS   | Styling           |
+| SQLite/MySQL   | Database          |
+| Laravel Breeze | Authentication    |
+| PHP            | Server-side Logic |
+
+---
+
+# Installation
+
+## Clone Repository
+
+```bash
+git clone <repository-url>
+cd project-name
+```
+
+## Install Dependencies
+
+```bash
+composer install
+npm install
+```
+
+## Environment Setup
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+## Database Migration
+
+```bash
+php artisan migrate
+```
+
+## Start Development Server
+
+### Terminal 1
+
+```bash
+php artisan serve
+```
+
+### Terminal 2
+
+```bash
+npm run dev
+```
+
+---
+
+# Future Enhancements
+
+* File upload system
+* Notifications system
+* Email alerts
+* Advanced analytics dashboard
+* Export reports (PDF)
+* Multi-file evidence uploads
+* Real-time notifications
+
+---
+
+# Project Highlights
+
+* Secure role-based architecture
+* Real-world legal workflow simulation
+* Activity logging system
+* Dashboard personalization
+* Scalable Laravel structure
+* Authorization-focused backend design
+
+---
+
+# Author
+
+Aiman Malik
+
+B.Tech Computer Science
+
+---
+
+# License
+
+This project is developed for educational and academic purposes.
