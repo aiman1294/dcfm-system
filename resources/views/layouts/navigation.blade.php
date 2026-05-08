@@ -25,6 +25,11 @@
                     </x-nav-link>
                 @endif
                 </div>
+                @if(auth()->user()->role === 'admin')
+    <x-nav-link :href="url('/admin/role-requests')" :active="request()->is('admin/role-requests')">
+        Role Requests
+    </x-nav-link>
+@endif
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">

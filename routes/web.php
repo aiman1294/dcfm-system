@@ -50,20 +50,29 @@ Route::get('/dashboard', function () {
     $user = auth()->user();
 
     if ($user->role === 'admin') {
+        $logs = CaseLog::where('created_at', '>=', now()->subDays(7))
+        ->latest()
+        ->take(10)
+        ->get();
 
-        $logs = CaseLog::latest()->take(10)->get();
 
     } elseif ($user->role === 'judge') {
 
         $logs = CaseLog::whereHas('caseFile', function ($query) use ($user) {
             $query->where('judge_id', $user->id);
-        })->latest()->take(10)->get();
+        })->where('created_at', '>=', now()->subDays(7))
+        ->latest()
+        ->take(10)
+        ->get();
 
     } else {
 
         $logs = CaseLog::whereHas('caseFile', function ($query) use ($user) {
             $query->where('user_id', $user->id);
-        })->latest()->take(10)->get();
+        })->where('created_at', '>=', now()->subDays(7))
+        ->latest()
+        ->take(10)
+        ->get();
     }
 
     return view('dashboard', compact('logs'));

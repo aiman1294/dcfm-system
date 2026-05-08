@@ -24,7 +24,11 @@
                             Recent Activity
                         </h2>
 
-                        <div class="space-y-4">
+                        <p class="text-sm text-gray-500 mb-4">
+    Showing activity from the last 7 days.
+</p>
+
+                        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
 
                             @forelse($logs as $log)
 
