@@ -11,7 +11,7 @@
 
 <body class="bg-[#0f172a] text-white min-h-screen overflow-x-hidden">
 
-    <!-- Navbar -->
+    
     <header class="absolute top-0 left-0 w-full z-50">
         <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
 
@@ -19,33 +19,51 @@
                 <span class="text-indigo-400">DCFM</span> System
             </h1>
 
+            
             <div class="flex gap-4 items-center">
 
-                @auth
-                    <a href="{{ url('/dashboard') }}"
-                       class="bg-indigo-500 hover:bg-indigo-600 px-5 py-2 rounded-xl font-medium transition">
-                        Dashboard
-                    </a>
-                @else
+                @guest
+
                     <a href="{{ route('login') }}"
-                       class="text-gray-300 hover:text-white transition">
+                        class="text-gray-300 hover:text-white transition">
                         Log in
                     </a>
 
                     <a href="{{ route('register') }}"
-                       class="bg-white text-black hover:bg-gray-200 px-5 py-2 rounded-xl font-medium transition">
+                        class="bg-white text-black hover:bg-gray-200 px-5 py-2 rounded-xl font-medium transition">
                         Register
                     </a>
-                @endauth
+
+                @endguest
+
+        @auth
+
+            <a href="{{ route('profile.edit') }}"
+            class="text-gray-300 hover:text-white transition font-medium">
+            {{ auth()->user()->name }}
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+
+                    <button type="submit"
+                    class="bg-white text-black hover:bg-gray-200 px-5 py-2 rounded-xl font-medium transition">
+                    Log Out
+                    </button>
+            </form>
+
+        @endauth
 
             </div>
+
         </div>
+        
     </header>
 
-    <!-- Hero -->
+    
     <main class="relative min-h-screen flex items-center">
 
-        <!-- Glow Effects -->
+        
         <div class="absolute inset-0 overflow-hidden">
 
             <div class="absolute top-[-150px] left-[-100px] w-[400px] h-[400px] bg-indigo-500/30 blur-3xl rounded-full"></div>
@@ -56,7 +74,7 @@
 
         <div class="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
 
-            <!-- LEFT -->
+            
             <div>
 
                 <p class="uppercase tracking-[0.3em] text-indigo-400 text-sm font-semibold mb-6">
@@ -75,21 +93,34 @@
                     to manage legal cases, hearing schedules, verdicts,
                     and activity timelines securely.
                 </p>
+                
                 <div class="flex gap-5">
+                
+                 @guest
+                 
+                <a href="{{ url('/features') }}"
+                class="bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-2xl text-lg font-semibold transition shadow-2xl">
+                Explore Features
+                
+                </a>
+                @endguest
+                
+                @auth
+                
+                @if(in_array(auth()->user()->role, ['admin', 'lawyer', 'judge']))
+                <a href="{{ url('/dashboard') }}"
+               class="bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-2xl text-lg font-semibold transition shadow-2xl">
+                Go to Dashboard
+                </a>
+                @endif
 
-    @auth
-
-        <a href="{{ url('/dashboard') }}"
-           class="bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-2xl text-lg font-semibold transition shadow-2xl">
-            Go to Dashboard
-        </a>
-
-    @else
-
-        <a href="#features"
-           class="bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-2xl text-lg font-semibold transition shadow-2xl">
-            Explore Features
-        </a>
+                @if(auth()->user()->role === null || auth()->user()->role === 'pending')
+            
+            <a href="{{ url('/features') }}"
+               class="bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-2xl text-lg font-semibold transition shadow-2xl">
+                Explore Features
+            </a>
+        @endif
 
     @endauth
 
@@ -99,7 +130,7 @@
 
             </div>
 
-            <!-- RIGHT -->
+        
             <div class="space-y-6">
 
                 <div class="bg-white/10 border border-white/10 backdrop-blur-lg rounded-3xl p-6 shadow-2xl">

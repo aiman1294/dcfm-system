@@ -29,6 +29,12 @@ class AdminController extends Controller
         $user->requested_role = null;
         $user->save();
 
+        \App\Models\Notification::create([
+    'user_id' => $user->id,
+    'message' => "Your account has been approved as {$user->role}",
+    'link' => '/'
+]);
+        
         return redirect()->back()->with(
             'success',
             "Role {$user->role} assigned to {$user->name}"

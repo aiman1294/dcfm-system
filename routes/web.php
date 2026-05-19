@@ -5,6 +5,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CaseFileController;
 use App\Http\Controllers\AdminController;
 use App\Models\CaseLog;
+use App\Http\Controllers\NotificationController;
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+
+});
 
 
 Route::middleware(['auth', 'approved'])->group(function () {
@@ -46,6 +54,10 @@ Route::get('/home', function(){
 
 
 Route::get('/dashboard', function () {
+    
+    if (!in_array(auth()->user()->role, ['admin', 'lawyer', 'judge'])) {
+            abort(403);
+            }
 
     $user = auth()->user();
 
@@ -86,3 +98,7 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::view('/features', 'features');
+
+
