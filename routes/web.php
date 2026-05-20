@@ -13,6 +13,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
 });
+Route::get('/pending-approval', function () {
+    return view('pending-approval');
+})->middleware('auth');
 
 
 Route::middleware(['auth', 'approved'])->group(function () {
@@ -55,9 +58,10 @@ Route::get('/home', function(){
 
 Route::get('/dashboard', function () {
     
+   
     if (!in_array(auth()->user()->role, ['admin', 'lawyer', 'judge'])) {
-            abort(403);
-            }
+        return redirect('/pending-approval');
+    }
 
     $user = auth()->user();
 
